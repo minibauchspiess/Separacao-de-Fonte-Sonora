@@ -5,8 +5,17 @@ function [targetNamed,testNamed, error] = OutNames(target, test, outCb, outFl, e
 %mais facil de analisar os resultados. A saida 'error' serve para avisar
 %caso tenha ocorrido algum erro ao comparar um vetor
 
-roundedTest = round(test);
-
+%roundedTest = round(test);
+%Para cada vetor de saída, o maior equivale a 1, e o menor, a 0
+for i = 1:size(test, 1)
+    if test(i, 1) == max(test(i,:))
+        test(i,1) = 1;
+        test(i, 2) = 0;
+    else
+        test(i,1) = 0;
+        test(i,2) = 1;
+    end
+end
 
 for i = 1:size(target, 1)
     if isequal(target(i,:), outCb)
@@ -15,9 +24,9 @@ for i = 1:size(target, 1)
         targetNamed{i} = 'Flauta';
     end
     
-    if isequal(roundedTest(i,:), outCb)
+    if isequal(test(i,:), outCb)
         testNamed{i} = 'ContraBaixo';
-    elseif isequal(roundedTest(i,:), outFl)
+    elseif isequal(test(i,:), outFl)
         testNamed{i} = 'Flauta';
     else
         %Se nao tiver caido em nenhuma das opcoes anteriores, a saida nao

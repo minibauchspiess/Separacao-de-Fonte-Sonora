@@ -4,3 +4,5 @@ TestingPrograms/NNMF/FaceDetection/CBCL_Database/
 *.asv
 
 TestingPrograms/ShallowNeuralNetwork/testandoUmasCoisas.m
+
+TestingPrograms/ShallowNeuralNetwork/testandoUmaFuncao.m

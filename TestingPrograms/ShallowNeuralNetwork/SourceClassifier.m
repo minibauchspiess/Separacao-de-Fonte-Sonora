@@ -39,9 +39,10 @@ net.divideParam.testRatio = 0;
 
 net.performFcn = 'mse';
 net.trainFcn = 'trainlm'; % set training function to trainlm (Levenberg-Marquardt backpropagation) 
-net.trainParam.epochs = 10000;
-net.trainParam.min_grad = 1e-10;
-%net.trainParam.max_fail = 1e10;
+net.trainParam.epochs = 5000;
+net.trainParam.min_grad = 1e-15;
+net.trainParam.max_fail = 5000;
+net.trainParam.mu_max = 1e12;
 
 net.plotFcns = {'plotperform', 'plottrainstate', 'ploterrhist', 'plotconfusion', 'plotroc'};
 
