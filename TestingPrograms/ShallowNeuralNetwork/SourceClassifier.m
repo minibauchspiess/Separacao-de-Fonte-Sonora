@@ -1,68 +1,88 @@
-%Rede para classificar entre flauta e baixo
+%SourceClassifier - Classificador de fonte
 
-
-%Debug
-error = [];
-
-%Parametros para pegar os dados das amostras
-outCb = [0 1];
-outFl = [1 0];
-folder = 'AmostrasSonoras/Samples-SC';
-files = {'Cb-ord-pp-1c- B4.aif' 'Fl-ord-B4-pp.aif'};
-targets = {outCb outFl};
-
-winPerAudio = 180;
-winSize = 1024;
-
-k = 10;
+%O programa abaixo aborda o problema da identificação do instrumento 
+%musical em dois sinais de áudio distintos. Para tanto, cada sinal de áudio
+%é separado em amostras de tamanhos iguais, e de cada amostra são extraídos
+%5 descritores do som (spectral centroid, spread, slope, decrease e
+%rolloff). Esses descritores serão utilizados para se determinar qual o
+%instrumento tocado, utilizando-os como entrada numa rede neural rasa.
+%A fim de analisar o desempenho da rede de forma mais aceita
+%estatisticamente, será utilizado o método do k-fold, buscando qual a
+%acurácia média das k redes treinadas. Redes que não convergiram não são
+%consideradas para este propósito.
 
 
 
-%Parametros da rede
+
+%***Parâmetros para pegar os dados das amostras***
+
+outCb = [0 1];  %Saída da rede correspondente a um contrabaixo
+outFl = [1 0];  %Saída da rede correspondente a uma flauta
+folder = 'AmostrasSonoras/Samples-SC';  %Pasta onde estao armazenadas as amostras sonoras
+files = {'Cb-ord-pp-1c- B4.aif' 'Fl-ord-B4-pp.aif'};    %Arquivos a serem utilizados na entrada da rede
+targets = {outCb outFl};    %Qual a saída desejada da rede, considerando a ordem dos arquivos em "files"
+
+winPerAudio = 180;  %Quantas amostras serão extraídas de cada áudio
+winSize = 1024;     %Qual o tamanho de cada amostra extraído do sinal
+
+k = 10;     %Quantidades de grupos do k-fold
+
+
+
+%***Parametros da rede***
+
 numIn = 1;              %Apenas um input, sendo este um vetor
 numLay = 2;             %Duas camadas, sendo uma intermediária e outra de output
 biasCon = [1; 1];       %Todas camadas com bias
 inCon = [1; 0];         %Input se conecta apenas à camada intermediaria
 layCon = [0 0; 1 0];    %Layer intermediaria não recebe entrada de si mesma e da última
-                        %Última layer recebe entrada da intermediária e não recebe de si mesma
+                        %Ultima layer recebe entrada da intermediária e não recebe de si mesma
 outCon = [0 1];         %Apenas última camada é conectada ao output
 
+net = network(numIn, numLay, biasCon, inCon, layCon, outCon);   %Arquitetura da rede criada
 
 
-net = network(1, 2, [1; 1], [1;0], [0 0; 1 0], [0 1]);
+
+%***Parametros para treinamento da rede***
 
 net.adaptFcn = 'adaptwb';
-net.divideFcn = 'dividerand'; %Set the divide function to dividerand (divide training data randomly).
-net.divideParam.trainRatio = 0.8;
+net.divideFcn = 'dividerand'; %Divide-se o conjunto de treinamento aleatoriamente
+net.divideParam.trainRatio = 0.8;   %Divisão dos conjuntos de treinamento, validação e teste
 net.divideParam.valRatio = 0.2;
-net.divideParam.testRatio = 0;
+net.divideParam.testRatio = 0;  %O conjunto de teste é separado e testado manualmente, com o método de k-fold
 
-net.performFcn = 'mse';
-net.trainFcn = 'trainlm'; % set training function to trainlm (Levenberg-Marquardt backpropagation) 
-net.trainParam.epochs = 5000;
+net.performFcn = 'mse';     %Mean Square Error, medida de performance da rede
+net.trainFcn = 'trainlm';   %Função de treino segue o modelo de Levenberg-Marquardt backpropagation
+net.trainParam.epochs = 10000;  
 net.trainParam.min_grad = 1e-15;
-net.trainParam.max_fail = 5000;
-net.trainParam.mu_max = 1e12;
+net.trainParam.max_fail = 2500;
+net.trainParam.mu_max = 1e99;
 
-net.plotFcns = {'plotperform', 'plottrainstate', 'ploterrhist', 'plotconfusion', 'plotroc'};
+net.plotFcns = {'plotperform','plotconfusion'};
 
-%set Layer1
+
+
+%***Arquitetura das camadas da rede***
+
+%Layer 1
 net.layers{1}.name = 'Layer 1';
-net.layers{1}.dimensions = 7;
+net.layers{1}.dimensions = 14;  %14 neurônios na camada intermediária
 net.layers{1}.initFcn = 'initnw';
 net.layers{1}.transferFcn = 'tansig';
 
 %set Layer2
 net.layers{2}.name = 'Layer 2';
-net.layers{2}.dimensions = 2;
+net.layers{2}.dimensions = 2;   %2 neurônios na camada de saída (cada um indica a um dos instrumentos)
 net.layers{2}.initFcn = 'initnw';
-net.layers{2}.transferFcn = 'tansig';
+net.layers{2}.transferFcn = 'softmax';
 
 
 
+%***Preparação das amostras por k-fold***
 
-%Gerando as amostras
 for i=1:size(files,2)
+    %Extraindo os descritores de um sinal de áudio e inserindo-os em uma
+    %matriz de entrada
     path = fullfile(folder, files{i});
     [X{i}, T{i}, fs] = BuildSampleMatrix(path, targets{i}, winSize, winPerAudio);
 end
@@ -71,11 +91,11 @@ end
 [kX, kT] = KfoldGroups(X, T, k);
 
 
+%***Treinamento dos k grupos de amostras***
 
-
-%Faz 10 treinos, com 10 combinações diferentes
+discartedNetCount = 0; %Contador para as redes não convergidas e descartadas
 for i = 1:k
-    %Separa o grupo de treino
+    %Separa os k grupos de treino
     xTrain{i} = [];
     xTarget{i} = [];
     for j = 1:k
@@ -93,40 +113,24 @@ for i = 1:k
     net = init(net);
     
     %Treina a rede, utilizando o grupo em questão
-    trainedNet{i} = train(net, xTrain{i}', xTarget{i}');
+    [trainedNet{i}, tr{i}] = train(net, xTrain{i}', xTarget{i}');
+    
+    %Caso a rede não tenha convergido, descarta resultado e treina outra
+    while tr{i}.perf(end) > 0.15
+        discartedNetCount = discartedNetCount + 1;
+        
+        net = init(net);
+        [trainedNet{i}, tr{i}] = train(net, xTrain{i}', xTarget{i}');
+    end
+    
     
     %Utilizando o vetor de teste, para testar a acurácia da rede
     y{i} = trainedNet{i}(xTest{i}');
     
-    %Transforma as saidas em forma de vetor em celula de strings (para uso
-    %na matriz de confusao)
-    [testTargetNamed{i}, yNamed{i}, error] = OutNames(xTestTarget{i}, y{i}', outCb, outFl, error);
-    
     %Gera matriz de confusao para este teste
-    conf{i} = confusionmat(testTargetNamed{i}, yNamed{i}, 'Order', {'Flauta', 'ContraBaixo'});
-    
+    [conf{i}, confMat{i}] = confusion(xTestTarget{i}', y{i});
 end
 
-%{
-%Retira um grupo, mistura o restante
-xTrain{1} = [kX{1}; kX{2}; kX{3}; kX{4}; kX{5}; kX{6}; kX{7}; kX{8}; kX{9}];
-xTarget{1} = [kT{1}; kT{2}; kT{3}; kT{4}; kT{5}; kT{6}; kT{7}; kT{8}; kT{9}];
-xTest{1} = kX{10};
-xTestTarget{1} = kT{10};
-%index = randperm(size(xTrain{1},1));
-%xTrain{1} = xTrain{1}(index, :);
-
-%Treina a rede
-net = init(net);
-trainedNet{1} = train(net, xTrain{1}', xTarget{1}');
-
-
-y = trainedNet{1}(xTest{1}');
-
-
-%net = train(net,x, t); %training
-
-%y = net(x); %prediction
-
-%view(net2);
-%}
+%Calcula acuracia media das redes treinadas
+meanAccuracy = mean(1 - cell2mat(conf))
+varAccuracy = var(1 - cell2mat(conf))
