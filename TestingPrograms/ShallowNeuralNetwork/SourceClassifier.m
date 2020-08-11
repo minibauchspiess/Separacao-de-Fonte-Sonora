@@ -3,7 +3,7 @@
 %O programa abaixo aborda o problema da identificação do instrumento 
 %musical em dois sinais de áudio distintos. Para tanto, cada sinal de áudio
 %é separado em amostras de tamanhos iguais, e de cada amostra são extraídos
-%5 descritores do som (spectral centroid, spread, slope, decrease e
+%5 descritores do som (spectral centroid, spread (espalhamento), slope, decrease e
 %rolloff). Esses descritores serão utilizados para se determinar qual o
 %instrumento tocado, utilizando-os como entrada numa rede neural rasa.
 %A fim de analisar o desempenho da rede de forma mais aceita
