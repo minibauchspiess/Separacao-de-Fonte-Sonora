@@ -3,7 +3,7 @@ function [centroid, spread, slope, decrease, rolloff] = GetDescriptors(y, Fs, wi
 %GetDescriptors: essa funcao divide um sinal de áudio recebido em uma
 %quantidade específica, e pra cara pedaço do sinal, extrai seus descritores
 %(centroid, spread, slope, decrease e rolloff)
-
+ 
 
 %Dividindo o sinal em pedaços do tamanho de batchSize, para eliminar
 %trechos não necessarios, pegando apenas o centro do sinal
