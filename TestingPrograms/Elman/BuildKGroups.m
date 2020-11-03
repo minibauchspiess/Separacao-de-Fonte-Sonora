@@ -9,8 +9,8 @@ function [X, T] = BuildKGroups(inpMats, targMats, divisions)
     X = cell(1,szOut);
     T = cell(1,szOut);
     
-    for i=1:size(inpMats, 2)
-        curXMat1 = inpMats{
+    
+    for i=1:size(inpMats{1}, 2)
         
         for j=1:divisions
             %Fórmulas dos índices recuperados das matrizes

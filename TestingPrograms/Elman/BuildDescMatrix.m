@@ -13,6 +13,10 @@ X = [cent'; spread'; slope'; dec'; rol'];
 
 %Forma o array de células target de acordo com o tamanho do array de input
 T = repmat(target,[1 size(X,2)]);
+
+%Formata as matrizes para que cada vetor coluna seja uma celula
+X = con2seq(X);
+T = con2seq(T);
 %{
 %Divide o trecho em partes iguais, e recupera a parte pedida
 sz = size(X, 2) / parts;
