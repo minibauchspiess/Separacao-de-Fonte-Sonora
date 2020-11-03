@@ -1,4 +1,4 @@
-function [X, T, fs] = BuildDescMatrix(file, target, windowSize, windowCount)
+function [X, T, fs] = BuildDescMatrix(file, target, windowSize)
 %BuildDescMatrix: Função para montar a matriz de descritores de um único
 %sinal de áudio passado
 
@@ -6,7 +6,7 @@ function [X, T, fs] = BuildDescMatrix(file, target, windowSize, windowCount)
 [y, fs] = audioread(file);
 
 %Adquire os descritores
-[cent, spread, slope, dec, rol] = GetDescriptors(y, fs,  windowSize, windowCount);
+[cent, spread, slope, dec, rol] = GetDescriptors(y, fs,  windowSize);
 
 %Forma o array de células
 X = [cent'; spread'; slope'; dec'; rol'];
@@ -17,10 +17,5 @@ T = repmat(target,[1 size(X,2)]);
 %Formata as matrizes para que cada vetor coluna seja uma celula
 X = con2seq(X);
 T = con2seq(T);
-%{
-%Divide o trecho em partes iguais, e recupera a parte pedida
-sz = size(X, 2) / parts;
-X = X( 1+(part-1)*sz : part*sz );
-T = T( 1+(part-1)*sz : part*sz );
-%}
+
 end

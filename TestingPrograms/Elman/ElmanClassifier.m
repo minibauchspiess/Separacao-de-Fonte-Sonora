@@ -7,14 +7,11 @@ net = NetParams();
 
 
 %Geracao das amostras, com K groups
-[CbMats, cbTargets] = FolderMatrix(fullfile(folder,cbFolder), outCb, winSize, winPerAudio);
-[FlMats, flTargets] = FolderMatrix(fullfile(folder,flFolder), outFl, winSize, winPerAudio);
+[CbMats, cbTargets] = FolderMatrix(fullfile(folder,cbFolder), outCb, winSize);
+[FlMats, flTargets] = FolderMatrix(fullfile(folder,flFolder), outFl, winSize);
 
-[X, T] = BuildKGroups({CbMats,FlMats}, {cbTargets,flTargets}, numDivisions);
+[X, T] = BuildKGroups({CbMats,FlMats}, {cbTargets,flTargets}, k, seqSize);
 
-%Apresenta na tela o valor de K que esta sendo utilizado
-k = size(X,2);
-fprintf("O valor de K é %d\n", k);
 
 
 %Treina as k redes, com os grupos de teste e treino definidos

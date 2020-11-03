@@ -1,4 +1,4 @@
-function [Xs, Ts] = FolderMatrix(folder, target, windowSize, windowCount)
+function [Xs, Ts] = FolderMatrix(folder, target, windowSize)
 %FolderMatrix Recebe uma pasta contendo amostras sonoras, e gera um vetor
 %célula com cada elemento sendo uma matriz gerada por um dos arquivos de
 %áudio
@@ -14,7 +14,7 @@ function [Xs, Ts] = FolderMatrix(folder, target, windowSize, windowCount)
         filePath = fullfile(folder, files{i});
         
         %Monta uma matriz
-        [Xs{i}, Ts{i}] = BuildDescMatrix(filePath, target, windowSize, windowCount);
+        [Xs{i}, Ts{i}] = BuildDescMatrix(filePath, target, windowSize);
     end
 
 end

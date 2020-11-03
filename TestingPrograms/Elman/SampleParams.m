@@ -8,5 +8,7 @@ cbFolder = 'ppCbFiles';
 flFolder = 'ppFlFiles'; 
 
 winSize = 1024;     %Qual o tamanho de cada amostra extraído do sinal
-winPerAudio = 100;  %Quantas amostras serão extraídas de cada áudio
-numDivisions = 25;  %Em quantas vezes o sinal de áudio é dividido para compor uma entrada
+%winPerAudio = 100;  %Quantas amostras serão extraídas de cada áudio
+seqSize = 4;  %Tamanho da sequencia de vetores
+
+k = 10;     %Valor de K, para K-fold
