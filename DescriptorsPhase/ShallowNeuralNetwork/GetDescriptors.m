@@ -23,10 +23,10 @@ yCenter = y(round(dif/2) : round(dif/2) + windowSize * windowCount - 1);
 
 %Pega os descritores
 centroid = spectralCentroid(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
-spread = spectralCentroid(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
-slope = spectralCentroid(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
-decrease = spectralCentroid(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
-rolloff = spectralCentroid(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
+spread = spectralSpread(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
+slope = spectralSlope(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
+decrease = spectralDecrease(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
+rolloff = spectralRolloffPoint(yCenter, Fs, 'Window', hamming(windowSize), 'OverlapLength', 0, 'FFTLength', windowSize);
 
 
 
