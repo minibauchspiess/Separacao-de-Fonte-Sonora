@@ -4,8 +4,8 @@ function [] = CompareAudios(origFile,cutFile)
     %original
     
     %Obtendo o sinal original e o sinal cortado
-    [yOrig, ~] = audioread(origFile);
-    [yCut, ~] = audioread(cutFile);
+    [yOrig, fs] = audioread(origFile);
+    [yCut, fs] = audioread(cutFile);
     
     %Obtendo informações do começo e fim do sinal cortado
     cutInfo = audioinfo(cutFile);
@@ -13,12 +13,17 @@ function [] = CompareAudios(origFile,cutFile)
     xInit = delim(1);
     xEnd = delim(2);
     
+    step = 1/fs;
+    xInit = xInit * step;
+    xEnd = xEnd * step;
+    sigEnd = (size(yOrig, 1)-1)*step;
+    
     %Plot dos dois sinais juntos (para comparação)
-    plot(yOrig);    
+    plot(0:step:sigEnd,yOrig);    
     title('Original x Corte')
     hold on
 
-    plot(xInit:xEnd,yCut)
+    plot(xInit:step:xEnd,yCut)
     hold off
     
 end

@@ -3,7 +3,7 @@
 
 outCb = [0; 1];  %Saída da rede correspondente a um contrabaixo
 outFl = [1; 0];  %Saída da rede correspondente a uma flauta
-folder = '../Samples-SC/';  %Pasta onde estao armazenadas as amostras sonoras
+folder = '../../Samples-SC/';  %Pasta onde estao armazenadas as amostras sonoras
 cbFolder = 'ppCbFiles';
 flFolder = 'ppFlFiles'; 
 
