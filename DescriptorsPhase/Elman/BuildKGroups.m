@@ -1,7 +1,7 @@
 function [X, T] = BuildKGroups(inpMats, targMats, k, seqSize)
 %BuildKGroups Retorna dois vetores de células, cada elemento sendo um grupo
 %utilizado para o K-fold
-%   X contém os descritores
+%   X contém os descritores, T contém os targets
     
     groupIndex = 1; %Índice utilizado para determinar em qual grupo a sequência será inserida
     X = cell(1,k);
@@ -30,7 +30,7 @@ function [X, T] = BuildKGroups(inpMats, targMats, k, seqSize)
                 if flag
                     X{groupIndex} = seqX;
                     T{groupIndex} = seqT;
-                    if groupIndex == 10
+                    if groupIndex == k
                         flag = 0;
                     end
                 else
