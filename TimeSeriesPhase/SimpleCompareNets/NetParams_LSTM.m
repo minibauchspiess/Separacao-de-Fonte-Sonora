@@ -1,4 +1,4 @@
-function [layers, options] = NetParams_LSTM(numHiddenUnits)
+function [layers, options] = NetParams_LSTM(numHiddenUnits, maxEpochs)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -12,7 +12,7 @@ layers = [ ...
     fullyConnectedLayer(numClasses, 'Name', 'output')
     regressionLayer('Name', 'regression')];
 
-maxEpochs = 500;
+%maxEpochs = 500;
 miniBatchSize = 1;
 
 options = trainingOptions('adam', ...
