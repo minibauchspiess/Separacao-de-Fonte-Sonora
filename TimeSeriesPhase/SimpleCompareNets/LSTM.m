@@ -5,7 +5,7 @@
 [fl, ~] = audioread("../../Samples/Preprocessed/filtro2-ord-FlFiles/Fl-ord-E4-mf.wav");
 fl = fl(1:size(cb,1));
 
-
+%{
 fprintf("Treinos com 5 neuronios:\n");
 neuronios = 5;
 maxEpochs = 5;
@@ -47,6 +47,27 @@ fprintf("Treino pures encerrado em "+num2str(floor(timePures_500n/60))+" min "+n
 
 [netTrainedAll_500n, trAll_500n, timeAll_500n, epochsAll_500n] = Train_LSTM(layer_lstm, opt_lstm, cb', fl', "All");
 fprintf("Treino all encerrado em "+num2str(floor(timeAll_500n/60))+" min "+num2str(mod(timeAll_500n, 60))+" s, com "+num2str(epochsAll_500n)+" epocas\n");
+%}
+
+qtdNeurons = [20 30 40];
+maxEpochs = 5;
+
+for i=1:size(qtdNeurons,2)
+    neuronios = qtdNeurons(i);
+    
+    fprintf("Treino com "+num2str(qtdNeurons(i))+" neuronios\n");
+    [layer_lstm, opt_lstm] = NetParams_LSTM(neuronios, maxEpochs);
+   
+    [netTrainedMixed{i}, trMixed{i}, timeMixed{i}, epochsMixed{i}] = Train_LSTM(layer_lstm, opt_lstm, cb', fl', "MixedOnly");
+    fprintf("\nTreino mixed encerrado em "+num2str(floor(timeMixed{i}/60))+" min "+num2str(mod(timeMixed{i}, 60))+" s, com "+num2str(epochsMixed{i})+" epocas\n");
+    
+    [netTrainedPures{i}, trPures{i}, timePures{i}, epochsPures{i}] = Train_LSTM(layer_lstm, opt_lstm, cb', fl', "PuresOnly");
+    fprintf("\nTreino pures encerrado em "+num2str(floor(timePures{i}/60))+" min "+num2str(mod(timePures{i}, 60))+" s, com "+num2str(epochsPures{i})+" epocas\n");
+    
+    [netTrainedAll{i}, trAll{i}, timeAll{i}, epochsAll{i}] = Train_LSTM(layer_lstm, opt_lstm, cb', fl', "All");
+    fprintf("\nTreino all encerrado em "+num2str(floor(timeAll{i}/60))+" min "+num2str(mod(timeAll{i}, 60))+" s, com "+num2str(epochsAll{i})+" epocas\n");
+    
+end
 
 
 

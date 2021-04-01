@@ -3,17 +3,17 @@
 %na pasta destino. Cada corte eh apresentado em plot e perguntado se o
 %corte esta aceitavel (caso contrario, o arquivo nao eh salvo)
 
-destFolder = "Preprocessed/filtro2-harm-CbFiles";  %Pasta para salvar arquivos de saida
-origFolder = "Original/artificial-harmonic";  %Pasta de arquivos originais
+origFolder = "Original/harpa-ordinario";  %Pasta de arquivos originais
+destFolder = "Preprocessed/filtZhang/Harp-ord";  %Pasta para salvar arquivos de saida
 files = dir(origFolder);    %Arquivos da pasta
 
 %Percorre todos os arquivos, preprocessando um a um
 j=1; %Contador de cortes nao aceitos
-i=4; %Exclui '.','..' e '.DS_Store'
+i=3; %Exclui '.','..'
 while i <= size(files,1)
     %Monta o caminho ao arquivo, e o preprocessa
     filePath = fullfile(origFolder, files(i).name);
-    [finalSound, origSound, fs, soundBegin] = Filter2(filePath);
+    [finalSound, origSound, fs, soundBegin] = ZhangFilter(filePath);
     
     %Com confirmacao de usuario, salva o arquivo final, ou o separa como
     %falha
