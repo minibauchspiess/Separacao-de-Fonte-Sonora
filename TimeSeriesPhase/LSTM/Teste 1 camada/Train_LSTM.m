@@ -31,14 +31,14 @@ end
 
 %Treina a rede
 tic;
+fprintf("Epocas treinadas: 0 ");
 [trained_net_lstm, tr_lstm] = trainNetwork(XTrain,YTrain,layer_lstm,opt_lstm);
 aux = trained_net_lstm;
 
 minMeanLoss = mean(tr_lstm.TrainingLoss);
 epochCount = 0;
-count = 1;
+count = 0;
 finalNet = trained_net_lstm;
-fprintf("Epocas treinadas: ");
 while  count<3
     
     if mean(tr_lstm.TrainingLoss) > minMeanLoss
