@@ -7,7 +7,7 @@
 qtdNeurons = [10 15 20 25 30 35 40 45 50];
 maxEpochs = 5;
 
-for i=1:size(qtdNeurons,2)
+for i=7:size(qtdNeurons,2)
     neuronios = qtdNeurons(i);
     
     fprintf("Treino com "+num2str(qtdNeurons(i))+" neuronios comecado\n");
