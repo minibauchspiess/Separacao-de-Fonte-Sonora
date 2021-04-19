@@ -1,20 +1,18 @@
-function [layers, options] = NetParams_LSTM(maxEpochs)
+function [layers, options] = NetParams_LSTM(numHiddenUnits, maxEpochs)
 
 inputSize = 1;
-numClasses = 2;
+numClasses = 3;
 
 layers = [ ...
     sequenceInputLayer(inputSize, 'Name', 'input')
-    lstmLayer(8,'OutputMode','sequence', 'Name', 'LSTM1')
-    lstmLayer(20,'OutputMode','sequence', 'Name', 'LSTM2')
-    lstmLayer(numClasses,'OutputMode','sequence', 'Name', 'LSTM_out')
+    lstmLayer(numHiddenUnits,'OutputMode','sequence', 'Name', 'LSTM')
     fullyConnectedLayer(numClasses, 'Name', 'output')
     regressionLayer('Name', 'regression')];
 
 miniBatchSize = 1;
 
 options = trainingOptions('adam', ...
-    'ExecutionEnvironment','gpu', ...
+    'ExecutionEnvironment','cpu', ...
     'GradientThreshold',1, ...
     'MaxEpochs',maxEpochs, ...
     'MiniBatchSize',miniBatchSize, ...
