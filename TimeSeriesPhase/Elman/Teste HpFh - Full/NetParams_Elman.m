@@ -3,7 +3,7 @@ function [net] = NetParams_Elman()
 %rede resultante
 %   Função criada apenas para deixar o script principal mais "limpo"
     
-    net = elmannet(1, 14);      %Um delay na camada escondida, 14 neurônios na camada escondida
+    net = elmannet(1, 40);      %Um delay na camada escondida, 40 neurônios na camada escondida
     net.divideFcn = '';         %Todos os valores de entrada são para treino
     net.layers{2}.transferFcn = 'purelin';      %Saida direto da rede, para pegar a sequencia
     net.trainFcn = 'trainlm';   %Treino com Levenberg-Marquardt
