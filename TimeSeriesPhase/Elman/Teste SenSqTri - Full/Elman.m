@@ -21,8 +21,9 @@ fprintf("Elman treinada em " + num2str(floor(elTimeElman/60)) + "m"+num2str(mod(
 outMixed = trained_net_elman((s+sq+tri)/3);
 
 
-audiowrite("Resultados/outCb1.wav", outMixed(1,:), fs);
-audiowrite("Resultados/outFl1.wav", outMixed(2,:), fs);
+audiowrite("Resultados/outSen1.wav", outMixed(1,:), fs);
+audiowrite("Resultados/outSq1.wav", outMixed(2,:), fs);
+audiowrite("Resultados/outTri1.wav", outMixed(3,:), fs);
 
 save Resultados/vars1.mat
 
