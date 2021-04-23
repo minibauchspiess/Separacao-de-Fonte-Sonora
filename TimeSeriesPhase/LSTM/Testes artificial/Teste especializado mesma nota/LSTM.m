@@ -10,10 +10,10 @@ numNeurons = [40 70 100 130 160];
 
 for i=1:size(numNeurons,2)
     fprintf("Iniciando treino com "+num2str(numNeurons(i))+" neuronios\n");
-    [layer, opt] = NetParams_LSTM(numNeurons(i), 5);
+    [layer, opt] = NetParams_LSTM(numNeurons(i), 1);
     [net{i}, tr{i}, time(i), epochs(i)] = Train_LSTM(layer, opt, s, sq, tri, "All", fs);
 
-    [~, outMixed{i}] = predictAndUpdateState(net, (s+sq+tri)/3);
+    [~, outMixed{i}] = predictAndUpdateState(net{i}, repmat((s+sq+tri)/3,[1 100]));
     audiowrite("Resultados/ondas/"+num2str(numNeurons(i))+"neurons_outSin.wav", outMixed{i}(1,:), fs);
     audiowrite("Resultados/ondas/"+num2str(numNeurons(i))+"neurons_outSquare.wav", outMixed{i}(2,:), fs);
     audiowrite("Resultados/ondas/"+num2str(numNeurons(i))+"neurons_outTri.wav", outMixed{i}(2,:), fs);

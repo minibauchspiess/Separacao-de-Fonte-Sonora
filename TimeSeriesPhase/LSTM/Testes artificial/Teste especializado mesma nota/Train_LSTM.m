@@ -46,7 +46,7 @@ count = 0;
 
 fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(tr.TrainingLoss(end))+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
 
-while  count<10000
+while  count<50000
     [net, tr] = trainNetwork(XTrain,YTrain,net.Layers,opt_lstm);
     epochCount = epochCount + opt_lstm.MaxEpochs;
     
