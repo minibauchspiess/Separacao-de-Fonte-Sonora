@@ -6,9 +6,9 @@ s=s';sq=sq';tri=tri';
 
 %Criacao das envoltorias aplicadas a cada
 
-numNeurons = [40 70 100 130 160];
+numNeurons = [40 70 100 130 160 190 220 250 300];
 
-for i=1:size(numNeurons,2)
+for i=6:size(numNeurons,2)
     fprintf("Iniciando treino com "+num2str(numNeurons(i))+" neuronios\n");
     [layer, opt] = NetParams_LSTM(numNeurons(i), 1);
     [net{i}, tr{i}, time(i), epochs(i)] = Train_LSTM(layer, opt, s, sq, tri, "All", fs);
