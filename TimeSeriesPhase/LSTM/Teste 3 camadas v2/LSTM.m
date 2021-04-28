@@ -1,6 +1,6 @@
 
-[hp, fs] = audioread("../../../Samples/TrainSamples/Harp-Fh/Hp-A#1-ff.wav");
-[fh, ~] = audioread("../../../Samples/TrainSamples/Harp-Fh/Fh-G4-pp.wav");
+[hp, fs] = audioread("C:\Users\cyber\Monografias\Monografia_RodrigoXavier\source\Separacao-de-Fonte-Sonora\Samples/TrainSamples/Harp-Fh/Hp-A#1-ff.wav");
+[fh, ~] = audioread("C:\Users\cyber\Monografias\Monografia_RodrigoXavier\source\Separacao-de-Fonte-Sonora\Samples/TrainSamples/Harp-Fh/Fh-G4-pp.wav");
 
 
 
