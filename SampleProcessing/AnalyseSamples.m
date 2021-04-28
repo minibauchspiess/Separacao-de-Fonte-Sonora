@@ -1,4 +1,4 @@
-SamplesFolder = 'flute-ordinario';
+SamplesFolder = '../Samples/flute-ordinario';
 files = dir(SamplesFolder);
 
 for i=4:size(files, 1)

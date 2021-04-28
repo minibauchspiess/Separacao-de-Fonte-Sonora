@@ -3,8 +3,8 @@
 %na pasta destino. Cada corte eh apresentado em plot e perguntado se o
 %corte esta aceitavel (caso contrario, o arquivo nao eh salvo)
 
-origFolder = "Original/harpa-ordinario";  %Pasta de arquivos originais
-destFolder = "Preprocessed/filtZhang/Harp-ord";  %Pasta para salvar arquivos de saida
+origFolder = "../Samples/Original/harpa-ordinario";  %Pasta de arquivos originais
+destFolder = "../Samples/Preprocessed/filtZhang/Harp-ord";  %Pasta para salvar arquivos de saida
 files = dir(origFolder);    %Arquivos da pasta
 
 %Percorre todos os arquivos, preprocessando um a um
