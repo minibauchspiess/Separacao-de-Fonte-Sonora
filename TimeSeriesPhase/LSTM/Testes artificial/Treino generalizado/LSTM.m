@@ -40,7 +40,7 @@ for i = 1:k
     
 end
 
-fprintf("Treino com "+num2str(numNeurons)+" neuronios finalizado, SDR medio: "+num2str(mean(cell2mat(meanSDR), 2))+"\n");
+fprintf("Treino com "+num2str(numNeurons)+" neuronios finalizado, SDR medio: "+num2str(mean(mean(cell2mat(meanSDR), 2)))+"\n");
 
 save("Resultados/varsSDR1_"+num2str(numNeurons)+"n.mat");
 
