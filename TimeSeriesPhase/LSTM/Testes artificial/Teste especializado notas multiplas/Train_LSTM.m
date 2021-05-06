@@ -56,7 +56,7 @@ sdrEvol = [epochCount maxMeanSDR];
 
 reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(maxMeanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
 
-while  count<3000
+while  count<1500
     %Faz o treinamento de mais epocas, atualiza quantas epocas ja foram
     [net, tr] = trainNetwork(XTrain,YTrain,net.Layers,opt_lstm);
     epochCount = epochCount + opt_lstm.MaxEpochs;
