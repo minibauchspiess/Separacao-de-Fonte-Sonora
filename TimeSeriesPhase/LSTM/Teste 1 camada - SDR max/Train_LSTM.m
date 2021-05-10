@@ -28,7 +28,7 @@ maxMeanSDR = bss_eval_sources(outMixed, YTrain);
 maxMeanSDR = mean(maxMeanSDR);
 
 
-fprintf("SDR medio maximo: ");
+sdrTitleTxtLen = fprintf("SDR medio maximo: ");
 sdrTxtLen = fprintf(num2str(maxMeanSDR));
 estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
 countTxtLen = 0;
@@ -55,25 +55,43 @@ while  count<maxCount
     %Atualiza o report
     fprintf(repmat('\b',1,reportTxtLen + (count>0)*countTxtLen));
     reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
-    
-    if meanSDR < maxMeanSDR
+    %Caso evolução da rede e leve para NaN
+    if isnan(meanSDR)
+        net = finalNet;
+        tr = finalTr;
         count = count+1;
-        countTxtLen = fprintf("Count "+num2str(count));
-    else
-        maxMeanSDR = meanSDR;
-        count = 0;
-        finalNet = net;
-        finalTr = tr;
         
-        %Atualiza o report do melhor SDR
         fprintf(repmat('\b',1,reportTxtLen));
         fprintf(repmat('\b',1,estTxtLen));
         fprintf(repmat('\b',1,sdrTxtLen));
+        fprintf(repmat('\b',1,sdrTitleTxtLen));
         
+        fprintf("Ocorrencia de SDR = NaN\n");
+        fprintf("SDR medio maximo: ");
         sdrTxtLen = fprintf(num2str(maxMeanSDR));
         estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
         reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
-   
+            countTxtLen = fprintf("Count "+num2str(count));
+    else
+        if meanSDR < maxMeanSDR
+            count = count+1;
+            countTxtLen = fprintf("Count "+num2str(count));
+        else
+            maxMeanSDR = meanSDR;
+            count = 0;
+            finalNet = net;
+            finalTr = tr;
+
+            %Atualiza o report do melhor SDR
+            fprintf(repmat('\b',1,reportTxtLen));
+            fprintf(repmat('\b',1,estTxtLen));
+            fprintf(repmat('\b',1,sdrTxtLen));
+
+            sdrTxtLen = fprintf(num2str(maxMeanSDR));
+            estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
+            reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
+
+        end
     end
     
     %A cada momento em que um novo melhor eh encontrado, salva os arquivos de audio para conferir durante treinamento
@@ -82,7 +100,9 @@ while  count<maxCount
         
         audiowrite("Resultados/temp/mix_1.wav", outMixed(1,:), fs);
         audiowrite("Resultados/temp/mix_2.wav", outMixed(2,:), fs);
+        save Resultados/temp/variaveis
     end
+    
 end
 fprintf("\n");
 
