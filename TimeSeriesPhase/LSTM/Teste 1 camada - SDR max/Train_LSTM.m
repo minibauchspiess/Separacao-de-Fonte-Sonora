@@ -1,44 +1,65 @@
 function [finalNet, finalTr, elTimeLSTM, sdrEvol] = Train_LSTM(layer_lstm, opt_lstm, hp, fh, maxCount, fs)
 
+%Caso nao sejam fornecidos argumentos, o treinamento sera uma continuacao
+%do ultimo salvo em Resultados/temp/variaveis.mat
+if nargin == 0
+    tic;
+    addpath("../../SSS_Eval");
+    warning("off","MATLAB:nearlySingularMatrix");   %O calculo de SDR mostra muito esse warning
+    load Resultados/temp/variaveis
+    
+    if exist('elTimeLSTM', 'var')==0
+        elTimeLSTM = 0;
+    end
+    tocOffset = elTimeLSTM;
+    sdrTitleTxtLen = fprintf("SDR medio maximo: ");
+    sdrTxtLen = fprintf(num2str(maxMeanSDR));
+    estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
+    reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(maxMeanSDR)+"\t"+num2str(floor(elTimeLSTM/3600))+"h"+num2str(mod(floor(elTimeLSTM/60), 60))+"m\t");
+else
 
-%Transforma entradas em sequências e no formato aceito para treino
-%Possiveis entradas
-trainMix = (hp+fh)/2;
+    %Transforma entradas em sequências e no formato aceito para treino
+    %Possiveis entradas
+    trainMix = (hp+fh)/2;
 
-%Possiveis saidas
-trainYMix=[hp;fh]/2;
-
-
-%Entrada e saida da rede, treinamento
-XTrain = trainMix;
-YTrain = trainYMix;
-
-
-%Treina a rede
-tic;
-c = clock;
-fprintf("Inicio do treino: dia "+num2str(c(3))+", "+num2str(c(4))+"h"+num2str(c(5))+"min\n");
-[net, tr] = trainNetwork(XTrain,YTrain,layer_lstm,opt_lstm);
-finalTr = tr;
-finalNet = net;
-
-%minLoss = tr.TrainingLoss(end);
-[~, outMixed] = predictAndUpdateState(finalNet, (hp+fh)/2);
-maxMeanSDR = bss_eval_sources(outMixed, YTrain);
-maxMeanSDR = mean(maxMeanSDR);
+    %Possiveis saidas
+    trainYMix=[hp;fh]/2;
 
 
-sdrTitleTxtLen = fprintf("SDR medio maximo: ");
-sdrTxtLen = fprintf(num2str(maxMeanSDR));
-estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
-countTxtLen = 0;
+    %Entrada e saida da rede, treinamento
+    XTrain = trainMix;
+    YTrain = trainYMix;
 
-epochCount = opt_lstm.MaxEpochs;
-count = 0;
-sdrEvol = [epochCount maxMeanSDR];
 
-reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(maxMeanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
+    %Treina a rede
+    tic;
+    c = clock;
+    tocOffset = 0;  %Parametro para caso a rede comece a treinar de um checkpoint
+    fprintf("Inicio do treino: dia "+num2str(c(3))+", "+num2str(c(4))+"h"+num2str(c(5))+"min\n");
+    [net, tr] = trainNetwork(XTrain,YTrain,layer_lstm,opt_lstm);
+    finalTr = tr;
+    finalNet = net;
 
+    %minLoss = tr.TrainingLoss(end);
+    [~, outMixed] = predictAndUpdateState(finalNet, (hp+fh)/2);
+    maxMeanSDR = bss_eval_sources(outMixed, YTrain);
+    maxMeanSDR = mean(maxMeanSDR);
+
+
+    sdrTitleTxtLen = fprintf("SDR medio maximo: ");
+    sdrTxtLen = fprintf(num2str(maxMeanSDR));
+    estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
+    countTxtLen = 0;
+
+    epochCount = opt_lstm.MaxEpochs;
+    count = 0;
+    sdrEvol = [epochCount maxMeanSDR];
+
+    elTimeLSTM = toc;
+    reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(maxMeanSDR)+"\t"+num2str(floor((elTimeLSTM+tocOffset)/3600))+"h"+num2str(mod(floor((elTimeLSTM+tocOffset)/60), 60))+"m\t");
+
+end
+ 
 while  count<maxCount
     %Faz o treinamento de mais epocas, atualiza quantas epocas ja foram
     [net, tr] = trainNetwork(XTrain,YTrain,net.Layers,opt_lstm);
@@ -54,7 +75,9 @@ while  count<maxCount
     
     %Atualiza o report
     fprintf(repmat('\b',1,reportTxtLen + (count>0)*countTxtLen));
-    reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
+    elTimeLSTM = toc;
+    reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor((elTimeLSTM+tocOffset)/3600))+"h"+num2str(mod(floor((elTimeLSTM+tocOffset)/60), 60))+"m\t");
+    
     %Caso evolução da rede e leve para NaN
     if isnan(meanSDR)
         net = finalNet;
@@ -70,8 +93,9 @@ while  count<maxCount
         fprintf("SDR medio maximo: ");
         sdrTxtLen = fprintf(num2str(maxMeanSDR));
         estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
-        reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
-            countTxtLen = fprintf("Count "+num2str(count));
+        elTimeLSTM = toc;
+        reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor((elTimeLSTM+tocOffset)/3600))+"h"+num2str(mod(floor((elTimeLSTM+tocOffset)/60), 60))+"m\t");
+        countTxtLen = fprintf("Count "+num2str(count));
     else
         if meanSDR < maxMeanSDR
             count = count+1;
@@ -89,7 +113,8 @@ while  count<maxCount
 
             sdrTxtLen = fprintf(num2str(maxMeanSDR));
             estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
-            reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor(toc/3600))+"h"+num2str(mod(floor(toc/60), 60))+"m\t");
+            elTimeLSTM = toc;
+            reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(meanSDR)+"\t"+num2str(floor((elTimeLSTM+tocOffset)/3600))+"h"+num2str(mod(floor((elTimeLSTM+tocOffset)/60), 60))+"m\t");
 
         end
     end
