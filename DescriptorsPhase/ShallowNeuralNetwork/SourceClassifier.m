@@ -16,14 +16,26 @@
 %***Parâmetros para pegar os dados das amostras***
 SampleParams;
 
-
-%***Parametros da rede***
-net = NetParams();
-
-
 %***Preparação das amostras por k-fold***
 [groups, targets] = InputMatHandler(samplesFolder, cbFolder, outCb, flFolder, outFl, winSize, k);
 
 
-%***Treinamento da rede***
-TrainingHandler;
+%***Parametros da rede***
+numNeurons = [10 20 30 40];
+
+for n=1:size(numNeurons,2)
+
+    %***Cria a rede***
+    net{n} = NetParams(numNeurons(n));
+
+    
+    %***Treinamento da rede***
+    tic;    %Contagem de tempo
+    TrainingHandler;
+    
+    elTime(n) = toc;
+    fprintf("Treino com "+numNeurons(n)+" neuronios finalizado em "+floor(elTime(n)/3600)+"h"+floor(mod(elTime(n), 3600)/60)+"m\n");
+end
+
+save Resultados/CLASS1
+

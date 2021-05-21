@@ -24,27 +24,27 @@ for i = 1:k
     xTestTarget{i} = targets{i};
     
     %Reinicia a rede
-    net = init(net);
+    net{n} = init(net{n});
     
     %Treina a rede, utilizando o grupo em questão
-    [trainedNet{i}, tr{i}] = train(net, xTrain{i}', xTarget{i}');
+    [trainedNet{n}{i}, tr{n}{i}] = train(net{n}, xTrain{i}', xTarget{i}');
     
     %Caso a rede não tenha convergido, descarta resultado e treina outra
-    while tr{i}.perf(end) > 0.15
+    while tr{n}{i}.perf(end) > 0.15
         discartedNetCount = discartedNetCount + 1;
         
         net = init(net);
-        [trainedNet{i}, tr{i}] = train(net, xTrain{i}', xTarget{i}');
+        [trainedNet{n}{i}, tr{n}{i}] = train(net{n}, xTrain{i}', xTarget{i}');
     end
     
     
     %Utilizando o vetor de teste, para testar a acurácia da rede
-    y{i} = trainedNet{i}(xTest{i}');
+    y{n}{i} = trainedNet{n}{i}(xTest{i}');
     
     %Gera matriz de confusao para este teste
-    [conf{i}, confMat{i}] = confusion(xTestTarget{i}', y{i});
+    [conf{n}{i}, confMat{n}{i}] = confusion(xTestTarget{i}', y{n}{i});
 end
 
 %Calcula acuracia media das redes treinadas
-meanAccuracy = mean(1 - cell2mat(conf))
-varAccuracy = var(1 - cell2mat(conf))
+meanAccuracy{n} = mean(1 - cell2mat(conf{n}))
+varAccuracy{n} = var(1 - cell2mat(conf{n}))

@@ -1,4 +1,4 @@
-function [net] = NetParams()
+function [net] = NetParams(numNeurons)
 
     numIn = 1;              %Apenas um input, sendo este um vetor
     numLay = 2;             %Duas camadas, sendo uma intermediária e outra de output
@@ -35,7 +35,7 @@ function [net] = NetParams()
 
     %Layer 1
     net.layers{1}.name = 'Layer 1';
-    net.layers{1}.dimensions = 14;  %14 neurônios na camada intermediária
+    net.layers{1}.dimensions = numNeurons;  %14 neurônios na camada intermediária
     net.layers{1}.initFcn = 'initnw';
     net.layers{1}.transferFcn = 'tansig';
 
