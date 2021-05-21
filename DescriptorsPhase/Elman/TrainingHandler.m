@@ -5,16 +5,16 @@ for i=1:k
     [Xtrain{i},Ttrain{i},Xtest{i},Ttest{i}] = TrainTestKGroups(X,T,i);
     
     %Inicializa a rede e a treina
-    net = init(net);
-    [trainedNet{i}, tr{i}] = train(net,Xtrain{i},Ttrain{i});
+    net{n} = init(net{n});
+    [trainedNet{n}{i}, tr{n}{i}] = train(net{n},Xtrain{i},Ttrain{i});
     
     %Testa a rede recém treinada, adquirindo sua performance e erro ao
     %longo do tempo
-    Y{i} = trainedNet{i}(Xtest{i});
-    [conf{i}, confMat{i}] = confusion(cell2mat(Ttest{i}), cell2mat(Y{i}));
+    Y{n}{i} = trainedNet{n}{i}(Xtest{i});
+    [conf{n}{i}, confMat{n}{i}] = confusion(cell2mat(Ttest{i}), cell2mat(Y{n}{i}));
 end
 
 
 %Calcula acuracia media das redes treinadas
-meanAccuracy = mean(1 - cell2mat(conf))
-varAccuracy = var(1 - cell2mat(conf))
+meanAccuracy{n} = mean(1 - cell2mat(conf{n}))
+varAccuracy{n} = var(1 - cell2mat(conf{n}))
