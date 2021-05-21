@@ -12,20 +12,23 @@ hpCut=hp(1:duracaoDaNota*fs);fhCut=fh(1:duracaoDaNota*fs);
 
 %Faz os treinamentos
 addpath("../../SSS_Eval");
-warning("off","MATLAB:nearlySingularMatrix");   %O calculo de SDR mostra muito esse warning
-numNeurons = 80;   %Qtd de neuronios na camada LSTM
+%warning("off","MATLAB:nearlySingularMatrix");   %O calculo de SDR mostra muito esse warning
+warning("off");     %Suprime o warning acima e o avisando da GPU, pro log ficar limpo
+numNeurons = 60;   %Qtd de neuronios na camada LSTM
 maxEpochs = 5;      %De quantas em quantas epocas a rede eh treinada
-maxCount = 300;     %Quantos treinamentos sem melhoria da rede sao feitos antes de aceitar a rede como a melhor
+maxCount = 1000;     %Quantos treinamentos sem melhoria da rede sao feitos antes de aceitar a rede como a melhor
 
 fprintf("Iniciando treino com "+num2str(numNeurons)+" neuronios\n");
 [layer, opt] = NetParams_LSTM(numNeurons, maxEpochs);
 [net, tr, time, sdrEvol] = Train_LSTM(layer, opt, hpCut, fhCut, maxCount, fs);
 
-[~, outMixed] = predictAndUpdateState(net, (hp+fh)/2);
+[~, outMixed] = predictAndUpdateState(net, (hpCut+fhCut)/2);
 audiowrite("Resultados/ondas/"+num2str(numNeurons)+"neurons_outHpSDR.wav", outMixed(1,:), fs);
 audiowrite("Resultados/ondas/"+num2str(numNeurons)+"neurons_outFhSDR.wav", outMixed(2,:), fs);
 
-[SDR, SIR, SAR, perm] = bss_eval_sources(outMixed, [hp;fh]/2);
+[SDR, SIR, SAR, perm] = bss_eval_sources(outMixed, [hpCut;fhCut]/2);
 
 save("Resultados/vars_SDR_"+num2str(numNeurons)+".mat")
+
+warning("on");  %Reativa os warnings, caso o usuario precise
 

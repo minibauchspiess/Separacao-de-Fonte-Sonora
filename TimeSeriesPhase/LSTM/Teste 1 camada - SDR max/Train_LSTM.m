@@ -2,11 +2,14 @@ function [finalNet, finalTr, elTimeLSTM, sdrEvol] = Train_LSTM(layer_lstm, opt_l
 
 %Caso nao sejam fornecidos argumentos, o treinamento sera uma continuacao
 %do ultimo salvo em Resultados/temp/variaveis.mat
-if nargin == 0
+if nargin == 1
     tic;
     addpath("../../SSS_Eval");
-    warning("off","MATLAB:nearlySingularMatrix");   %O calculo de SDR mostra muito esse warning
-    load Resultados/temp/variaveis
+    %warning("off","MATLAB:nearlySingularMatrix");   %O calculo de SDR mostra muito esse warning
+    warning("off");     %Suprime o warning acima e o avisando da GPU, pro log ficar limpo
+    numNeurons = layer_lstm; %Caso tenha somente um argumento, este sera o numero de neuronios na camada ao inves das camadas
+    clear layer_lstm    %Apaga a "layer" com numero de neuronios, para garantir que nao havera conflito dos nomes aplicados para tipos diferentes
+    load("Resultados/temp/variaveis"+numNeurons+".mat")
     
     if exist('elTimeLSTM', 'var')==0
         elTimeLSTM = 0;
@@ -16,6 +19,9 @@ if nargin == 0
     sdrTxtLen = fprintf(num2str(maxMeanSDR));
     estTxtLen = fprintf("\nEpocas\tSDR\t\tTempo");
     reportTxtLen = fprintf("\n"+num2str(epochCount)+"\t\t"+num2str(maxMeanSDR)+"\t"+num2str(floor(elTimeLSTM/3600))+"h"+num2str(mod(floor(elTimeLSTM/60), 60))+"m\t");
+    if count>0
+        countTxtLen = fprintf("Count "+num2str(count));
+    end
 else
 
     %Transforma entradas em sequências e no formato aceito para treino
@@ -125,8 +131,8 @@ while  count<maxCount
         
         audiowrite("Resultados/temp/mix_1.wav", outMixed(1,:), fs);
         audiowrite("Resultados/temp/mix_2.wav", outMixed(2,:), fs);
-        save Resultados/temp/variaveis
     end
+    save("Resultados/temp/variaveis"+layer_lstm(2).NumHiddenUnits+".mat");
     
 end
 fprintf("\n");
