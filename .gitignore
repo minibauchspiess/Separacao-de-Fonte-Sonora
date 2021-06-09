@@ -14,3 +14,6 @@ TestingPrograms/Demonstracoes/
 *.wav
 *.wav
 TimeSeriesPhase/LSTM/Teste 1 camada - SDR max/Checkpoint/*
+*.aif
+*.wav
+*.wav
