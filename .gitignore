@@ -1,19 +1,13 @@
 
 TestingPrograms/NNMF/FaceDetection/CBCL_Database/
 
+*.mat
 *.asv
+
+*.aif
+*.wav
 
 TestingPrograms/ShallowNeuralNetwork/testandoUmasCoisas.m
 
 TestingPrograms/ShallowNeuralNetwork/testandoUmaFuncao.m
 
-TestingPrograms/Demonstracoes/
-*.wav
-*.wav
-*.wav
-*.wav
-*.wav
-TimeSeriesPhase/LSTM/Teste 1 camada - SDR max/Checkpoint/*
-*.aif
-*.wav
-*.wav
